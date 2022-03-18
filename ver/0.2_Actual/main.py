@@ -85,7 +85,7 @@ class Window(QMainWindow):
       bookmarks_toolbar.addAction(twitter)
       
       # Style
-      self.setWindowIcon(QIcon('resources/logo_1.png'))
+      self.setWindowIcon(QIcon('resources/logo_1.ico'))
       app.setStyle('Fusion')
       self.setStyleSheet("background-color: gray;")
       self.navigation_bar.setStyleSheet("color: white;")
