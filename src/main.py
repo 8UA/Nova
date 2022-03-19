@@ -1,14 +1,15 @@
 from sys import argv 
+import os
 from PyQt5.QtCore import QUrl
 from PyQt5.QtWebEngineWidgets import QWebEngineView
-#                                 Web Browser (HTML Frame)
+                           #    Web Browser (HTML Frame)    #
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
+
 
 class Window(QMainWindow):
    def __init__(self, *args, **kwargs):
       super(Window, self).__init__(*args, **kwargs)
-
 
       self.browser = QWebEngineView()
       self.browser.setUrl(QUrl('https://start.duckduckgo.com/'))
@@ -37,8 +38,10 @@ class Window(QMainWindow):
       refresh_button.triggered.connect(self.browser.reload)
       self.navigation_bar.addAction(refresh_button)
 
+      self.navigation_bar.addSeparator()
+
       home_button = QAction("Home", self)
-      home_button.setStatusTip('Go to home page (Google page)')
+      home_button.setStatusTip('Go to home page')
       home_button.triggered.connect(self.go_to_home)
       self.navigation_bar.addAction(home_button)
 
@@ -48,9 +51,18 @@ class Window(QMainWindow):
       self.URLBar.returnPressed.connect(lambda: self.go_to_URL(QUrl(self.URLBar.text())))  # This specifies what to do when enter is pressed in the Entry field
       self.navigation_bar.addWidget(self.URLBar)
 
+      self.navigation_bar.addSeparator()
+
+      options_button = QAction("Options", self)
+      options_button.setStatusTip('See browser options')
+                                                               # LOCAL ERROR PAGE (FEATURE NOT IMPLEMENTED) #
+      options_button.triggered.connect(lambda: self.go_to_URL(QUrl("file:///resources/error.html")))
+      self.navigation_bar.addAction(options_button)
+      
+      self.navigation_bar.addSeparator()
+
       self.addToolBarBreak()
 
-      # Adding another toolbar which contains the bookmarks
       bookmarks_toolbar = QToolBar('Bookmarks', self)
       self.addToolBar(bookmarks_toolbar)
 
@@ -84,16 +96,16 @@ class Window(QMainWindow):
       twitter.triggered.connect(lambda: self.go_to_URL(QUrl("https://www.twitter.com")))
       bookmarks_toolbar.addAction(twitter)
       
-      # Style
-      self.setWindowIcon(QIcon('resources/logo_1.ico'))
+      # Default Style
       app.setStyle('Fusion')
+      self.setWindowIcon(QIcon('resources/logo_1.ico'))
       self.setStyleSheet("background-color: gray;")
       self.navigation_bar.setStyleSheet("color: white;")
       bookmarks_toolbar.setStyleSheet("color: white;")
 
       self.show()
 
-   # method for updating the title of the window
+
    def update_title(self):
       title = self.browser.page().title()
       self.setWindowTitle("% s - Nova Browser" % title)
