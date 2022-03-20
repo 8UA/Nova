@@ -1,18 +1,31 @@
 from sys import argv 
-import os
-from PyQt5.QtCore import QUrl
-from PyQt5.QtWebEngineWidgets import QWebEngineView
-                           #    Web Browser (HTML Frame)    #
+import urllib.request
+import qtmodern.styles
+import qtmodern.windows
+from PyQt5.QtCore import QUrl, QSize
+from PyQt5.QtWebEngineWidgets import QWebEngineView #    Web Browser (HTML Frame)    #
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 
+# Check if connected to internet.
+def connect():
+   host = 'http://google.com'
+   try:
+      urllib.request.urlopen(host) # Python 3.x
+      return True
+   except:
+      return False
 
 class Window(QMainWindow):
    def __init__(self, *args, **kwargs):
       super(Window, self).__init__(*args, **kwargs)
 
+   
       self.browser = QWebEngineView()
-      self.browser.setUrl(QUrl('https://start.duckduckgo.com/'))
+      if connect() == False:
+         self.browser.setUrl(QUrl("file:///resources/error.html"))
+      else:
+         self.browser.setUrl(QUrl('https://start.duckduckgo.com/'))
       self.browser.urlChanged.connect(self.update_AddressBar)
       self.setCentralWidget(self.browser)
       self.browser.loadFinished.connect(self.update_title)
@@ -23,17 +36,24 @@ class Window(QMainWindow):
       self.navigation_bar = QToolBar('Navigation Toolbar')
       self.addToolBar(self.navigation_bar)
 
-      back_button = QAction("[ < ]", self)
+      # BUTTONS DEFAULT SIZE
+      size = QSize(18, 18)
+      self.setIconSize(size)
+
+      back_button = QAction("Back",self)
+      back_button.setIcon(QIcon('resources/left.png'))
       back_button.setStatusTip('Go to previous page you visited')
       back_button.triggered.connect(self.browser.back)
       self.navigation_bar.addAction(back_button)
 
-      next_button = QAction("[ > ]", self)
+      next_button = QAction("Next",self)
+      next_button.setIcon(QIcon('resources/right.png'))
       next_button.setStatusTip('Go to next page')
       next_button.triggered.connect(self.browser.forward)
       self.navigation_bar.addAction(next_button)
 
       refresh_button = QAction("Refresh", self)
+      refresh_button.setIcon(QIcon('resources/rotate.png'))
       refresh_button.setStatusTip('Refresh this page')
       refresh_button.triggered.connect(self.browser.reload)
       self.navigation_bar.addAction(refresh_button)
@@ -41,6 +61,7 @@ class Window(QMainWindow):
       self.navigation_bar.addSeparator()
 
       home_button = QAction("Home", self)
+      home_button.setIcon(QIcon('resources/home.png'))
       home_button.setStatusTip('Go to home page')
       home_button.triggered.connect(self.go_to_home)
       self.navigation_bar.addAction(home_button)
@@ -54,12 +75,27 @@ class Window(QMainWindow):
       self.navigation_bar.addSeparator()
 
       options_button = QAction("Options", self)
+      options_button.setIcon(QIcon('resources/menu.png'))
       options_button.setStatusTip('See browser options')
                                                                # LOCAL ERROR PAGE (FEATURE NOT IMPLEMENTED) #
       options_button.triggered.connect(lambda: self.go_to_URL(QUrl("file:///resources/error.html")))
       self.navigation_bar.addAction(options_button)
       
       self.navigation_bar.addSeparator()
+
+      # THEMES BUTTONS
+      dark_button = QAction("Dark Theme", self)
+      dark_button.setIcon(QIcon('resources/moon.png'))
+      dark_button.setStatusTip('Sets browser theme to Dark')
+      dark_button.triggered.connect(Themes.darkTheme)
+      self.navigation_bar.addAction(dark_button)
+
+      # Light theme is broke i know i still need to work on theme changes.
+      light_button = QAction("Light Theme [BROKE]", self)
+      light_button.setIcon(QIcon('resources/sun.png'))
+      light_button.setStatusTip('Sets browser theme to Light')
+      light_button.triggered.connect(Themes.lightTheme)
+      self.navigation_bar.addAction(light_button)
 
       self.addToolBarBreak()
 
@@ -95,23 +131,13 @@ class Window(QMainWindow):
       twitter.setStatusTip('Go to Twitter')
       twitter.triggered.connect(lambda: self.go_to_URL(QUrl("https://www.twitter.com")))
       bookmarks_toolbar.addAction(twitter)
-      
-      # Default Style
-      app.setStyle('Fusion')
-      self.setWindowIcon(QIcon('resources/logo_1.ico'))
-      self.setStyleSheet("background-color: gray;")
-      self.navigation_bar.setStyleSheet("color: white;")
-      bookmarks_toolbar.setStyleSheet("color: white;")
-
-      self.show()
 
 
-   def update_title(self):
-      title = self.browser.page().title()
-      self.setWindowTitle("% s - Nova Browser" % title)
 
    def go_to_home(self):
       self.browser.setUrl(QUrl('https://start.duckduckgo.com/'))
+      if connect() == False:
+         self.browser.setUrl(QUrl("file:///resources/error.html"))
 
    def go_to_URL(self, url: QUrl):
       if url.scheme() == '':
@@ -120,12 +146,31 @@ class Window(QMainWindow):
       self.update_AddressBar(url)
 
    def update_AddressBar(self, url):
+      if connect() == False:
+         self.browser.setUrl(QUrl("file:///resources/error.html"))
       self.URLBar.setText(url.toString())
       self.URLBar.setCursorPosition(0)
 
+   def update_title(self):
+      title = self.browser.page().title()
+      mw.setWindowTitle("                  % s - Nova Browser" % title)
+
+class Themes:
+   def darkTheme():
+         qtmodern.styles.dark(app)
+      
+   def lightTheme():
+         qtmodern.styles.light(app)
+
 
 app = QApplication(argv)
-app.setApplicationName('Nova')
-
 window = Window()
+
+# Default Style
+################################################# [WIP]
+Themes.darkTheme()
+mw = qtmodern.windows.ModernWindow(window)
+mw.setWindowTitle("                  Nova")
+mw.show()
+
 app.exec_()
