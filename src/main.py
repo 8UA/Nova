@@ -19,9 +19,15 @@ def connect():
 class Window(QMainWindow):
    def __init__(self, *args, **kwargs):
       super(Window, self).__init__(*args, **kwargs)
-
    
       self.browser = QWebEngineView()
+
+      self.status_bar = QStatusBar()
+      self.setStatusBar(self.status_bar)
+      
+      self.navigation_bar = QToolBar('Navigation Toolbar')
+      self.addToolBar(self.navigation_bar)
+
       if connect() == False:
          self.browser.setUrl(QUrl("file:///resources/error.html"))
       else:
@@ -30,15 +36,12 @@ class Window(QMainWindow):
       self.setCentralWidget(self.browser)
       self.browser.loadFinished.connect(self.update_title)
 
-      self.status_bar = QStatusBar()
-      self.setStatusBar(self.status_bar)
-
-      self.navigation_bar = QToolBar('Navigation Toolbar')
-      self.addToolBar(self.navigation_bar)
-
       # BUTTONS DEFAULT SIZE
-      size = QSize(18, 18)
+      size = QSize(16, 16)
       self.setIconSize(size)
+      # DEFAULT FONT
+      font = QFont("Arial", 8)
+      self.setFont(font)
 
       back_button = QAction("Back",self)
       back_button.setIcon(QIcon('resources/left.png'))
@@ -132,8 +135,6 @@ class Window(QMainWindow):
       twitter.triggered.connect(lambda: self.go_to_URL(QUrl("https://www.twitter.com")))
       bookmarks_toolbar.addAction(twitter)
 
-
-
    def go_to_home(self):
       self.browser.setUrl(QUrl('https://start.duckduckgo.com/'))
       if connect() == False:
@@ -141,7 +142,7 @@ class Window(QMainWindow):
 
    def go_to_URL(self, url: QUrl):
       if url.scheme() == '':
-         url.setScheme('https://')
+         url.setScheme('https')
       self.browser.setUrl(url)
       self.update_AddressBar(url)
 
