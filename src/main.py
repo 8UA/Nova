@@ -1,11 +1,18 @@
-from sys import argv 
-import urllib.request
-import qtmodern.styles
-import qtmodern.windows
-from PyQt5.QtCore import QUrl, QSize
-from PyQt5.QtWebEngineWidgets import QWebEngineView #    Web Browser (HTML Frame)    #
-from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
+try:
+   from time import sleep
+   from sys import argv 
+   import urllib.request
+   import qtmodern.styles
+   import qtmodern.windows
+   from PyQt5.QtCore import QUrl, QSize
+   from PyQt5.QtWebEngineWidgets import QWebEngineView #    Web Browser (HTML Frame)    #
+   from PyQt5.QtWidgets import *
+   from PyQt5.QtGui import *
+except ImportError:
+   print()
+   sleep(5)
+   print("Some modules are missing, use the install batch file.")
+
 
 # Check if connected to internet.
 def connect():
