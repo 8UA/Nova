@@ -1,6 +1,7 @@
 try:
    from time import sleep
-   from sys import argv 
+   from sys import argv
+   from subprocess import call
    import urllib.request
    import qtmodern.styles
    import qtmodern.windows
@@ -11,7 +12,7 @@ try:
 except ImportError:
    print()
    sleep(5)
-   print("Some modules are missing, use the install batch file.")
+   print('Some modules are missing.')
 
 
 # Check if connected to internet.
@@ -129,7 +130,7 @@ class Window(QMainWindow):
 
       linkedin = QAction("LinkedIn", self)
       linkedin.setStatusTip("Go to LinkedIn")
-      linkedin.triggered.connect(lambda: self.go_to_URL(QUrl("https://in.linkedin.com")))
+      linkedin.triggered.connect(lambda: self.go_to_URL(QUrl("https://www.linkedin.com")))
       bookmarks_toolbar.addAction(linkedin)
 
       instagram = QAction("Instagram", self)
